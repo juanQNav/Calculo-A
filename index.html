@@ -91,16 +91,40 @@
         color: #10b981;
         font-weight: 600;
       }
+
+      @media (max-width: 767px) {
+        body {
+          height: 100dvh;
+          min-height: 0;
+        }
+
+        #steps-container mjx-container,
+        #formulas-list-container mjx-container,
+        #quiz-question-math mjx-container {
+          max-width: 100%;
+          overflow-x: auto;
+          overflow-y: hidden;
+        }
+      }
+
+      .exercise-math {
+        display: block;
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        font-size: 0.85em;
+      }
     </style>
   </head>
   <body
-    class="h-full bg-slate-900 text-slate-100 flex flex-col font-sans antialiased overflow-hidden"
+    class="h-dvh min-h-0 bg-slate-900 text-slate-100 flex flex-col font-sans antialiased overflow-hidden"
   >
     <!-- Top Navigation Header -->
     <header
-      class="bg-slate-800/90 border-b border-slate-700/80 backdrop-blur shrink-0 px-4 py-3 flex items-center justify-between z-20"
+      class="bg-slate-800/90 border-b border-slate-700/80 backdrop-blur shrink-0 px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between gap-2 z-20"
     >
-      <div class="flex items-center gap-3">
+      <div class="flex min-w-0 items-center gap-2 sm:gap-3">
         <div
           class="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl shadow-lg shadow-blue-500/20"
         >
@@ -108,7 +132,7 @@
         </div>
         <div>
           <h1
-            class="text-lg font-bold text-white leading-tight flex items-center gap-2"
+            class="text-base sm:text-lg font-bold text-white leading-tight flex flex-wrap items-center gap-x-2"
           >
             Cálculo Integral
             <span
@@ -116,7 +140,7 @@
               >Exámenes Resueltos</span
             >
           </h1>
-          <p class="text-xs text-slate-400">
+          <p class="hidden sm:block text-xs text-slate-400">
             Paso a paso, formulario interactivo y trucos de solución
           </p>
         </div>
@@ -152,7 +176,7 @@
       </nav>
 
       <!-- Right Tools -->
-      <div class="flex items-center gap-2">
+      <div class="flex shrink-0 items-center gap-2">
         <button
           onclick="toggleFormulasModal()"
           class="flex items-center gap-2 bg-indigo-600/20 border border-indigo-500/40 text-indigo-300 hover:bg-indigo-600/30 px-3 py-1.5 rounded-lg text-sm font-medium transition"
@@ -192,15 +216,15 @@
     </div>
 
     <!-- Main Content Area -->
-    <main class="flex-1 flex overflow-hidden relative">
+    <main class="flex-1 min-h-0 flex overflow-hidden relative">
       <!-- TAB 1: EXAM SOLVER -->
       <div
         id="view-exams"
-        class="flex-1 flex flex-col md:flex-row w-full h-full overflow-hidden"
+        class="flex-1 min-h-0 flex flex-col md:flex-row w-full h-full overflow-hidden"
       >
         <!-- Exam & Exercise Selector Sidebar -->
         <aside
-          class="w-full md:w-80 bg-slate-800/50 border-r border-slate-700/80 flex flex-col shrink-0 h-48 md:h-full overflow-hidden"
+          class="w-full md:w-80 bg-slate-800/50 border-b md:border-b-0 md:border-r border-slate-700/80 flex flex-col shrink-0 h-40 sm:h-48 md:h-full overflow-hidden"
         >
           <div class="p-3 border-b border-slate-700/60 bg-slate-800/80">
             <label
@@ -235,14 +259,14 @@
 
         <!-- Integral Viewer & Interactive Solver Area -->
         <section
-          class="flex-1 flex flex-col bg-slate-900 h-full overflow-hidden"
+          class="flex-1 min-h-0 min-w-0 flex flex-col bg-slate-900 h-full overflow-hidden"
         >
           <!-- Exercise Header Bar -->
           <div
-            class="bg-slate-800/40 p-4 border-b border-slate-700/60 flex flex-wrap items-center justify-between gap-3 shrink-0"
+            class="bg-slate-800/40 p-3 sm:p-4 border-b border-slate-700/60 flex flex-wrap items-center justify-between gap-3 shrink-0"
           >
             <div>
-              <div class="flex items-center gap-2">
+              <div class="flex flex-wrap items-center gap-2">
                 <span
                   id="current-ex-badge"
                   class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30"
@@ -260,7 +284,7 @@
                 </span>
               </div>
               <h2
-                class="text-xl font-bold text-white mt-1.5 flex items-center gap-3"
+                class="text-lg sm:text-xl font-bold text-white mt-1.5 flex min-w-0 items-center gap-3"
               >
                 <span id="math-problem-display" class="tex2jax_process"
                   >$\int \dots$</span
@@ -270,7 +294,7 @@
 
             <!-- Step Controls -->
             <div
-              class="flex items-center gap-2 bg-slate-800 p-1 rounded-xl border border-slate-700"
+              class="flex items-center gap-1 sm:gap-2 bg-slate-800 p-1 rounded-xl border border-slate-700"
             >
               <button
                 onclick="prevStep()"
@@ -310,9 +334,9 @@
 
           <!-- Hint Drawer / Key Tip Footer -->
           <div
-            class="bg-slate-800/80 border-t border-slate-700/80 p-3.5 px-5 flex items-center justify-between shrink-0"
+            class="bg-slate-800/80 border-t border-slate-700/80 p-3 sm:p-3.5 sm:px-5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0"
           >
-            <div class="flex items-center gap-3 text-xs text-slate-300">
+            <div class="flex min-w-0 items-center gap-3 text-xs text-slate-300">
               <i
                 data-lucide="lightbulb"
                 class="w-5 h-5 text-amber-400 shrink-0"
@@ -338,7 +362,7 @@
       <!-- TAB 2: PRO TIPS & TRICKS -->
       <div
         id="view-tips"
-        class="hidden flex-1 overflow-y-auto p-6 custom-scrollbar bg-slate-900 w-full space-y-6"
+        class="hidden flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 custom-scrollbar bg-slate-900 w-full space-y-6"
       >
         <div class="max-w-4xl mx-auto space-y-6">
           <div>
@@ -489,7 +513,7 @@
       <!-- TAB 3: PRACTICE & QUIZZES -->
       <div
         id="view-practice"
-        class="hidden flex-1 overflow-y-auto p-6 custom-scrollbar bg-slate-900 w-full"
+        class="hidden flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 custom-scrollbar bg-slate-900 w-full"
       >
         <div class="max-w-3xl mx-auto space-y-6">
           <div>
@@ -505,7 +529,7 @@
 
           <!-- Quiz Card -->
           <div
-            class="bg-slate-800/90 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-6"
+            class="bg-slate-800/90 border border-slate-700 rounded-2xl p-4 sm:p-6 shadow-xl space-y-6"
           >
             <div
               class="flex items-center justify-between border-b border-slate-700/80 pb-4"
@@ -517,7 +541,7 @@
               <span
                 id="quiz-score"
                 class="text-xs font-bold bg-slate-900 px-3 py-1 rounded-full text-emerald-400 border border-slate-700"
-                >Puntaje: 0 / 0</span
+                >Puntaje: 0 / 3</span
               >
             </div>
 
@@ -554,6 +578,7 @@
             <div class="flex justify-end pt-2">
               <button
                 onclick="nextQuizQuestion()"
+                id="quiz-next-button"
                 class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition flex items-center gap-2"
               >
                 Siguiente Pregunta
@@ -568,13 +593,13 @@
     <!-- FORMULA SHEET MODAL -->
     <div
       id="formulas-modal"
-      class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4"
     >
       <div
-        class="bg-slate-800 border border-slate-700 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden"
+        class="bg-slate-800 border border-slate-700 rounded-2xl max-w-4xl w-full max-h-[90dvh] flex flex-col shadow-2xl overflow-hidden"
       >
         <div
-          class="p-4 border-b border-slate-700 flex items-center justify-between bg-slate-800/90"
+          class="p-3 sm:p-4 border-b border-slate-700 flex items-center justify-between gap-2 bg-slate-800/90"
         >
           <div class="flex items-center gap-2">
             <i data-lucide="book-open" class="w-5 h-5 text-indigo-400"></i>
@@ -1475,15 +1500,18 @@
       let currentStepIndex = 0;
       let quizIndex = 0;
       let quizScore = 0;
-      let quizTotal = 0;
+      let quizAnswered = 0;
+      let currentQuizOptions = [];
       let showAllSteps = false;
 
       // ON LOAD INITIALIZATION
       window.addEventListener("DOMContentLoaded", () => {
         renderExamTabs();
         renderFormulasList(FORMULAS);
+        renderExerciseList();
         loadExercise(0, 0);
         loadQuizQuestion(0);
+        updateQuizScore();
         lucide.createIcons();
       });
 
@@ -1576,9 +1604,9 @@
           .map(
             (ex, idx) => `
                 <button onclick="loadExercise(${currentExamIndex}, ${idx})" id="ex-card-${idx}" class="w-full text-left p-2.5 rounded-xl border transition flex items-center justify-between gap-2 ${idx === currentExerciseIndex ? "bg-indigo-950/40 border-indigo-500/60 text-white" : "bg-slate-900/50 border-slate-700/50 text-slate-300 hover:bg-slate-800/80"}">
-                    <div class="flex items-center gap-2 overflow-hidden">
+                    <div class="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
                         <span class="font-bold text-xs bg-slate-800 px-2 py-1 rounded text-indigo-300 border border-slate-700">${ex.label}</span>
-                        <span class="text-xs truncate tex2jax_process">$${ex.tex}$</span>
+                        <span class="exercise-math text-xs tex2jax_process">$${ex.tex}$</span>
                     </div>
                     <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500 shrink-0"></i>
                 </button>
@@ -1816,16 +1844,27 @@
       function loadQuizQuestion(idx) {
         quizIndex = idx % QUIZ_QUESTIONS.length;
         const q = QUIZ_QUESTIONS[quizIndex];
+        currentQuizOptions = [...q.options];
+        for (let i = currentQuizOptions.length - 1; i > 0; i--) {
+          const randomIndex = Math.floor(Math.random() * (i + 1));
+          [currentQuizOptions[i], currentQuizOptions[randomIndex]] = [
+            currentQuizOptions[randomIndex],
+            currentQuizOptions[i],
+          ];
+        }
 
         document.getElementById("quiz-question-math").textContent =
           `$${q.math}$`;
         document.getElementById("quiz-feedback").className =
           "hidden p-4 rounded-xl text-xs space-y-1";
+        document.getElementById("quiz-options-container").classList.remove("hidden");
+        document.getElementById("quiz-next-button").innerHTML =
+          'Siguiente Pregunta <i data-lucide="arrow-right" class="w-4 h-4"></i>';
 
         const optionsContainer = document.getElementById(
           "quiz-options-container",
         );
-        optionsContainer.innerHTML = q.options
+        optionsContainer.innerHTML = currentQuizOptions
           .map(
             (opt, i) => `
                 <button onclick="checkQuizAnswer(${i})" class="quiz-opt-btn w-full text-left p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-indigo-500/60 hover:bg-slate-800 text-slate-200 text-xs font-medium transition flex items-center justify-between">
@@ -1841,15 +1880,15 @@
       }
 
       function checkQuizAnswer(optionIdx) {
-        const q = QUIZ_QUESTIONS[quizIndex];
-        const opt = q.options[optionIdx];
+        if (quizAnswered >= QUIZ_QUESTIONS.length) return;
+
+        const opt = currentQuizOptions[optionIdx];
         const feedback = document.getElementById("quiz-feedback");
 
-        quizTotal++;
+        quizAnswered++;
         if (opt.correct) quizScore++;
 
-        document.getElementById("quiz-score").textContent =
-          `Puntaje: ${quizScore} / ${quizTotal}`;
+        updateQuizScore();
 
         feedback.classList.remove("hidden");
         if (opt.correct) {
@@ -1857,9 +1896,17 @@
             "p-4 rounded-xl text-xs bg-emerald-950/60 border border-emerald-600/60 text-emerald-300 block";
           feedback.innerHTML = `<div class="font-bold flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> ¡Respuesta Correcta!</div><div>${opt.explain}</div>`;
         } else {
+          const correctOption = currentQuizOptions.find((option) => option.correct);
           feedback.className =
-            "p-4 rounded-xl text-xs bg-rose-950/60 border border-rose-600/60 text-rose-300 block";
-          feedback.innerHTML = `<div class="font-bold flex items-center gap-1.5"><i data-lucide="x-circle" class="w-4 h-4 text-rose-400"></i> No es la mejor opción</div><div>${opt.explain}</div>`;
+            "p-4 rounded-xl text-xs bg-rose-950/60 border border-rose-600/60 text-rose-300 block space-y-2";
+          feedback.innerHTML = `<div class="font-bold flex items-center gap-1.5"><i data-lucide="x-circle" class="w-4 h-4 text-rose-400"></i> No es la mejor opción</div><div>${opt.explain}</div><div class="border-t border-rose-800/70 pt-2"><div class="font-bold text-emerald-300">Respuesta correcta: <span class="tex2jax_process">${correctOption.text}</span></div><div class="mt-1 text-slate-200">${correctOption.explain}</div></div>`;
+        }
+
+        if (quizAnswered === QUIZ_QUESTIONS.length) {
+          feedback.innerHTML += `<div class="border-t border-slate-600/70 pt-3 mt-3 font-bold text-white">Ronda completada: ${quizScore} de ${QUIZ_QUESTIONS.length} respuestas correctas.</div>`;
+          document.getElementById("quiz-options-container").classList.add("hidden");
+          document.getElementById("quiz-next-button").innerHTML =
+            'Reiniciar quiz <i data-lucide="rotate-ccw" class="w-4 h-4"></i>';
         }
 
         // Disable buttons after answer
@@ -1877,7 +1924,21 @@
       }
 
       function nextQuizQuestion() {
+        if (quizAnswered === QUIZ_QUESTIONS.length) {
+          quizIndex = 0;
+          quizScore = 0;
+          quizAnswered = 0;
+          updateQuizScore();
+          loadQuizQuestion(quizIndex);
+          return;
+        }
+
         loadQuizQuestion(quizIndex + 1);
+      }
+
+      function updateQuizScore() {
+        document.getElementById("quiz-score").textContent =
+          `Puntaje: ${quizScore} / ${QUIZ_QUESTIONS.length}`;
       }
     </script>
   </body>
