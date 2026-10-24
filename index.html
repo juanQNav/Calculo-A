@@ -1301,6 +1301,85 @@
         },
       ];
 
+      // Recommended video resources from the Calculus notebook
+      const VIDEO_RESOURCES = {
+        substitutionIntro: {
+          title: "Integración por sustitución | Introducción",
+          url: "https://www.youtube.com/watch?v=me4h_Ye3o3Y",
+        },
+        substitutionFractionExample1: {
+          title:
+            "Integral de una División - Fracción | Integrales por Sustitución - Cambio de variable | Ejemplo 1",
+          url: "https://www.youtube.com/watch?v=3bKcq50Hbc4",
+        },
+        rootSubstitutionExample7: {
+          title:
+            "Integral de una Raíz | Integrales por Sustitución - Cambio de variable | Ejemplo 7",
+          url: "https://www.youtube.com/watch?v=2ljDJEOEC40",
+        },
+        rootSubstitutionExample10: {
+          title:
+            "Integral de una Raíz | Integrales por Sustitución - Cambio de variable | Ejemplo 10",
+          url: "https://www.youtube.com/watch?v=YEyGzSW0LyI",
+        },
+        rootSubstitutionExample11: {
+          title:
+            "Integral de una raíz | Integrales por Sustitución - Cambio de variable | Ejemplo 11",
+          url: "https://www.youtube.com/watch?v=VOG5vkGH8QI",
+        },
+        fractionalPowerExample3: {
+          title:
+            "Integral de x elevado a la n | Potencias de x | Ejemplo 3 Exponente fracción",
+          url: "https://www.youtube.com/watch?v=fjvnqID3InY",
+        },
+        powerRuleExample1: {
+          title: "Integral de x elevado a la n | Potencia de x | Ejemplo 1",
+          url: "https://www.youtube.com/watch?v=vA1DnU7D6zM",
+        },
+        polynomialExample1: {
+          title: "Integral de un polinomio | Ejemplo 1",
+          url: "https://www.youtube.com/watch?v=6qx84tv9R28",
+        },
+        polynomialExample2: {
+          title: "Integral de un polinomio | Ejemplo 2",
+          url: "https://www.youtube.com/watch?v=1Du9XurNLkQ",
+        },
+        squareBinomial: {
+          title: "Integral del cuadrado de un binomio",
+          url: "https://www.youtube.com/watch?v=vWrwv7Y6g5E",
+        },
+        polynomialProductExample2: {
+          title:
+            "Integral de un producto | Ejemplo 2 | Multiplicación de polinomio por polinomio",
+          url: "https://www.youtube.com/watch?v=qS1iVP1u3ks",
+        },
+        substitutionExample4: {
+          title: "Integrales por Sustitución - Cambio de variable | Ejemplo 4",
+          url: "https://www.youtube.com/watch?v=aRLFeSJK4x4",
+        },
+      };
+
+      const RECOMMENDED_VIDEOS_BY_EXERCISE = {
+        "1a": ["rootSubstitutionExample7", "substitutionIntro"],
+        "1b": ["fractionalPowerExample3", "powerRuleExample1"],
+        "1c": ["rootSubstitutionExample7", "substitutionIntro"],
+        "1d": ["fractionalPowerExample3", "powerRuleExample1"],
+        "2a": ["polynomialExample1", "powerRuleExample1"],
+        "2b": ["substitutionFractionExample1", "rootSubstitutionExample10"],
+        "2c": ["fractionalPowerExample3"],
+        "2d": ["substitutionExample4", "powerRuleExample1"],
+        "3a": ["substitutionIntro", "substitutionExample4"],
+        "3b": ["rootSubstitutionExample10", "substitutionIntro"],
+        "3c": ["fractionalPowerExample3", "powerRuleExample1"],
+        "3d": ["polynomialExample2", "powerRuleExample1"],
+        "4a": ["fractionalPowerExample3", "powerRuleExample1"],
+        "4b": ["rootSubstitutionExample11", "substitutionIntro"],
+        "4c": ["fractionalPowerExample3", "powerRuleExample1"],
+        "4d": ["rootSubstitutionExample7", "substitutionIntro"],
+        "4e": ["squareBinomial", "polynomialProductExample2"],
+        "4f": ["rootSubstitutionExample10", "substitutionExample4"],
+      };
+
       // QUIZ DATA
       const QUIZ_QUESTIONS = [
         {
@@ -1549,12 +1628,48 @@
         triggerMathJax();
       }
 
+      function renderRecommendedVideos(exerciseId) {
+        const videos = (RECOMMENDED_VIDEOS_BY_EXERCISE[exerciseId] || [])
+          .map((videoId) => VIDEO_RESOURCES[videoId])
+          .filter(Boolean);
+
+        if (videos.length === 0) return "";
+
+        return `
+          <section class="bg-slate-800/70 border border-slate-700/80 rounded-2xl p-4 space-y-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="youtube" class="w-4 h-4 text-red-400 shrink-0"></i>
+              <div>
+                <h3 class="text-sm font-bold text-slate-100">Videos recomendados</h3>
+                <p class="text-[11px] text-slate-400">Recursos del cuaderno de Cálculo para practicar esta técnica.</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+              ${videos
+                .map(
+                  (video) => `
+                    <a href="${video.url}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-900/80 p-3 text-slate-200 transition hover:border-red-500/60 hover:bg-slate-900">
+                      <i data-lucide="circle-play" class="w-4 h-4 text-red-400 shrink-0"></i>
+                      <span class="min-w-0 flex-1">
+                        <span class="block text-xs font-medium leading-relaxed">${video.title}</span>
+                        <span class="mt-1 block text-[10px] text-slate-400">Abrir en YouTube</span>
+                      </span>
+                      <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500 shrink-0"></i>
+                    </a>
+                  `,
+                )
+                .join("")}
+            </div>
+          </section>
+        `;
+      }
+
       // RENDER STEPS CARDS
       function renderSteps() {
         const container = document.getElementById("steps-container");
         const ex = EXAMS_DATA[currentExamIndex].exercises[currentExerciseIndex];
 
-        container.innerHTML = ex.steps
+        const stepMarkup = ex.steps
           .map((step, idx) => {
             const isVisible = showAllSteps || idx <= currentStepIndex;
             const isCurrent = idx === currentStepIndex && !showAllSteps;
@@ -1584,6 +1699,8 @@
                 `;
           })
           .join("");
+
+        container.innerHTML = `${renderRecommendedVideos(ex.id)}${stepMarkup}`;
 
         lucide.createIcons();
         triggerMathJax();
