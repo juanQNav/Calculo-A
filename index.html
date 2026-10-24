@@ -1,0 +1,1767 @@
+<!doctype html>
+<html lang="es" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resolutor Interactivo de Integrales - Exámenes de Cálculo</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: "#f0f7ff",
+                100: "#e0effe",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
+                800: "#1e40af",
+                900: "#1e3a8a",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <!-- MathJax 3 configuration & CDN -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+          processEscapes: true,
+        },
+        options: {
+          ignoreHtmlClass: "tex2jax_ignore",
+          processHtmlClass: "tex2jax_process",
+        },
+        startup: {
+          ready: () => {
+            MathJax.startup.defaultReady();
+            window.mathJaxReady = true;
+            if (window.onMathJaxLoaded) {
+              window.onMathJaxLoaded();
+            }
+          },
+        },
+      };
+    </script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(100, 116, 139, 0.3);
+        border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(100, 116, 139, 0.5);
+      }
+      /* Highlight variables */
+      .u-var {
+        color: #ec4899;
+        font-weight: 600;
+      }
+      .du-var {
+        color: #8b5cf6;
+        font-weight: 600;
+      }
+      .dx-var {
+        color: #10b981;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body
+    class="h-full bg-slate-900 text-slate-100 flex flex-col font-sans antialiased overflow-hidden"
+  >
+    <!-- Top Navigation Header -->
+    <header
+      class="bg-slate-800/90 border-b border-slate-700/80 backdrop-blur shrink-0 px-4 py-3 flex items-center justify-between z-20"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl shadow-lg shadow-blue-500/20"
+        >
+          <i data-lucide="calculator" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <h1
+            class="text-lg font-bold text-white leading-tight flex items-center gap-2"
+          >
+            Cálculo Integral
+            <span
+              class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full font-medium"
+              >Exámenes Resueltos</span
+            >
+          </h1>
+          <p class="text-xs text-slate-400">
+            Paso a paso, formulario interactivo y trucos de solución
+          </p>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs -->
+      <nav
+        class="hidden md:flex items-center gap-1 bg-slate-900/60 p-1 rounded-xl border border-slate-700/60"
+      >
+        <button
+          onclick="switchMainTab('exams')"
+          id="tab-btn-exams"
+          class="px-4 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-2 bg-blue-600 text-white shadow-sm"
+        >
+          <i data-lucide="file-text" class="w-4 h-4"></i> Exámenes
+        </button>
+        <button
+          onclick="switchMainTab('tips')"
+          id="tab-btn-tips"
+          class="px-4 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800"
+        >
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i> Trucos y
+          Patrones
+        </button>
+        <button
+          onclick="switchMainTab('practice')"
+          id="tab-btn-practice"
+          class="px-4 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800"
+        >
+          <i data-lucide="gamepad-2" class="w-4 h-4 text-emerald-400"></i>
+          Quizzes & Practica
+        </button>
+      </nav>
+
+      <!-- Right Tools -->
+      <div class="flex items-center gap-2">
+        <button
+          onclick="toggleFormulasModal()"
+          class="flex items-center gap-2 bg-indigo-600/20 border border-indigo-500/40 text-indigo-300 hover:bg-indigo-600/30 px-3 py-1.5 rounded-lg text-sm font-medium transition"
+        >
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Formulario (30)</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile Nav Bar -->
+    <div
+      class="md:hidden bg-slate-800/80 border-b border-slate-700 px-2 py-1.5 flex justify-around text-xs shrink-0"
+    >
+      <button
+        onclick="switchMainTab('exams')"
+        id="mobile-tab-btn-exams"
+        class="px-3 py-1 rounded-md bg-blue-600 text-white font-medium flex items-center gap-1"
+      >
+        <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Exámenes
+      </button>
+      <button
+        onclick="switchMainTab('tips')"
+        id="mobile-tab-btn-tips"
+        class="px-3 py-1 rounded-md text-slate-400 font-medium flex items-center gap-1"
+      >
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> Trucos
+      </button>
+      <button
+        onclick="switchMainTab('practice')"
+        id="mobile-tab-btn-practice"
+        class="px-3 py-1 rounded-md text-slate-400 font-medium flex items-center gap-1"
+      >
+        <i data-lucide="gamepad-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+        Quizzes
+      </button>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex overflow-hidden relative">
+      <!-- TAB 1: EXAM SOLVER -->
+      <div
+        id="view-exams"
+        class="flex-1 flex flex-col md:flex-row w-full h-full overflow-hidden"
+      >
+        <!-- Exam & Exercise Selector Sidebar -->
+        <aside
+          class="w-full md:w-80 bg-slate-800/50 border-r border-slate-700/80 flex flex-col shrink-0 h-48 md:h-full overflow-hidden"
+        >
+          <div class="p-3 border-b border-slate-700/60 bg-slate-800/80">
+            <label
+              class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2"
+              >Seleccionar Examen</label
+            >
+            <div
+              class="grid grid-cols-4 gap-1 bg-slate-900/80 p-1 rounded-lg border border-slate-700/50"
+              id="exam-buttons-container"
+            >
+              <!-- Exam tabs generated via JS -->
+            </div>
+          </div>
+
+          <div class="p-3 flex-1 overflow-y-auto custom-scrollbar">
+            <div class="flex items-center justify-between mb-2">
+              <span
+                class="text-xs font-semibold text-slate-400 uppercase tracking-wider"
+                >Ejercicios</span
+              >
+              <span
+                id="exam-prof-badge"
+                class="text-[10px] text-indigo-300 bg-indigo-900/40 px-2 py-0.5 rounded border border-indigo-700/50"
+              ></span>
+            </div>
+
+            <div id="exercise-list" class="space-y-1.5">
+              <!-- Exercise list cards generated via JS -->
+            </div>
+          </div>
+        </aside>
+
+        <!-- Integral Viewer & Interactive Solver Area -->
+        <section
+          class="flex-1 flex flex-col bg-slate-900 h-full overflow-hidden"
+        >
+          <!-- Exercise Header Bar -->
+          <div
+            class="bg-slate-800/40 p-4 border-b border-slate-700/60 flex flex-wrap items-center justify-between gap-3 shrink-0"
+          >
+            <div>
+              <div class="flex items-center gap-2">
+                <span
+                  id="current-ex-badge"
+                  class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                >
+                  Examen 1 - Ejercicio A
+                </span>
+                <span
+                  id="current-trick-badge"
+                  class="px-2.5 py-0.5 rounded-md text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/20 flex items-center gap-1"
+                >
+                  <i data-lucide="zap" class="w-3 h-3"></i>
+                  <span id="trick-text" class="tex2jax_process"
+                    >Sustitución $u^n$</span
+                  >
+                </span>
+              </div>
+              <h2
+                class="text-xl font-bold text-white mt-1.5 flex items-center gap-3"
+              >
+                <span id="math-problem-display" class="tex2jax_process"
+                  >$\int \dots$</span
+                >
+              </h2>
+            </div>
+
+            <!-- Step Controls -->
+            <div
+              class="flex items-center gap-2 bg-slate-800 p-1 rounded-xl border border-slate-700"
+            >
+              <button
+                onclick="prevStep()"
+                id="btn-prev-step"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-700 text-slate-300 hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition"
+              >
+                <i data-lucide="chevron-left" class="w-4 h-4"></i> Ant
+              </button>
+              <div class="px-3 py-1 text-xs font-bold text-slate-300">
+                Paso <span id="step-current-num">1</span> de
+                <span id="step-total-num">4</span>
+              </div>
+              <button
+                onclick="nextStep()"
+                id="btn-next-step"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition"
+              >
+                Sig <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              </button>
+              <button
+                onclick="toggleShowAllSteps()"
+                id="btn-toggle-all"
+                class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-700/60 text-slate-300 hover:bg-slate-700 border border-slate-600/50 transition"
+              >
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Interactive Step Viewer Area -->
+          <div
+            class="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar space-y-4"
+            id="steps-container"
+          >
+            <!-- Step cards inserted dynamically -->
+          </div>
+
+          <!-- Hint Drawer / Key Tip Footer -->
+          <div
+            class="bg-slate-800/80 border-t border-slate-700/80 p-3.5 px-5 flex items-center justify-between shrink-0"
+          >
+            <div class="flex items-center gap-3 text-xs text-slate-300">
+              <i
+                data-lucide="lightbulb"
+                class="w-5 h-5 text-amber-400 shrink-0"
+              ></i>
+              <div>
+                <span class="font-bold text-amber-300">Consejo Clave:</span>
+                <span id="current-hint-text"
+                  >Observa el grado del numerador y denominador.</span
+                >
+              </div>
+            </div>
+            <button
+              onclick="openFormulaForCurrentStep()"
+              class="text-xs bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border border-indigo-500/40 px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1 shrink-0"
+            >
+              <i data-lucide="bookmark" class="w-3.5 h-3.5"></i> Ver Fórmula
+              Aplicada
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB 2: PRO TIPS & TRICKS -->
+      <div
+        id="view-tips"
+        class="hidden flex-1 overflow-y-auto p-6 custom-scrollbar bg-slate-900 w-full space-y-6"
+      >
+        <div class="max-w-4xl mx-auto space-y-6">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-7 h-7 text-amber-400"></i>
+              Estrategias y Trucos Definitivos de Integración
+            </h2>
+            <p class="text-slate-400 text-sm mt-1">
+              Guía práctica para identificar instantáneamente qué técnica usar
+              en los exámenes de Cálculo.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Trick 1 -->
+            <div
+              class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 shadow-lg space-y-3"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="p-2 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20 font-bold text-lg"
+                >
+                  1
+                </div>
+                <h3 class="font-bold text-slate-100 text-base">
+                  División por Monomio Único
+                </h3>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Si el denominador es una sola potencia o raíz de $x$ (monomio) y
+                el numerador tiene varios términos,
+                <strong>SEPARA la fracción término a término</strong>.
+              </p>
+              <div
+                class="bg-slate-900/90 p-3 rounded-xl border border-slate-700 text-xs font-mono text-indigo-300"
+              >
+                Ejemplo: $\int \frac{x^{1/5} - 3x + 1}{x^{3/2}} dx = \int \left(
+                x^{-13/10} - 3x^{-1/2} + x^{-3/2} \right) dx$
+              </div>
+              <div
+                class="text-[11px] text-amber-400/90 bg-amber-950/30 p-2 rounded-lg border border-amber-800/40"
+              >
+                ★ Usado en: Examen 1b, Examen 2c, Examen 3c, Examen 4a.
+              </div>
+            </div>
+
+            <!-- Trick 2 -->
+            <div
+              class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 shadow-lg space-y-3"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="p-2 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20 font-bold text-lg"
+                >
+                  2
+                </div>
+                <h3 class="font-bold text-slate-100 text-base">
+                  Sustitución $u$ por "Regla del Grado"
+                </h3>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Elige como <span class="u-var">$u$</span> la expresión dentro de
+                la raíz o potencia de
+                <strong>un grado mayor ($x^{n}$)</strong> que el término afuera
+                ($x^{n-1}$).
+              </p>
+              <div
+                class="bg-slate-900/90 p-3 rounded-xl border border-slate-700 text-xs font-mono text-pink-300"
+              >
+                Si ves $x^3$ abajo y $x^2$ arriba $\implies u = x^3 + \dots
+                \implies du = 3x^2 dx$.
+              </div>
+              <div
+                class="text-[11px] text-blue-400/90 bg-blue-950/30 p-2 rounded-lg border border-blue-800/40"
+              >
+                ★ Usado en: Examen 1a, 1c, Examen 2b, 2d, Examen 3a, 3b, Examen
+                4d.
+              </div>
+            </div>
+
+            <!-- Trick 3 -->
+            <div
+              class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 shadow-lg space-y-3"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="p-2 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20 font-bold text-lg"
+                >
+                  3
+                </div>
+                <h3 class="font-bold text-slate-100 text-base">
+                  Ajuste de Constantes en $du$
+                </h3>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Al derivar $u$, las constantes no te deben asustar. Multiplica o
+                divide el diferencial para que encaje exactamente con el
+                integrando.
+              </p>
+              <div
+                class="bg-slate-900/90 p-3 rounded-xl border border-slate-700 text-xs font-mono text-emerald-300"
+              >
+                Si $du = 3x^2 dx$ pero arriba tienes $9x^2 dx$, nota que $9 = 3
+                \times 3 \implies 3du = 9x^2 dx$.
+              </div>
+              <div
+                class="text-[11px] text-emerald-400/90 bg-emerald-950/30 p-2 rounded-lg border border-emerald-800/40"
+              >
+                ★ Usado en: Examen 2d, Examen 3a, Examen 4d.
+              </div>
+            </div>
+
+            <!-- Trick 4 -->
+            <div
+              class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 shadow-lg space-y-3"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="p-2 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20 font-bold text-lg"
+                >
+                  4
+                </div>
+                <h3 class="font-bold text-slate-100 text-base">
+                  Sustitución Algebraica Total
+                </h3>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Si al hacer cambio de variable te queda una $x$ "sobrante",
+                despeja $x$ en función de $u$ ($x = \frac{u-b}{a}$) y
+                reemplázala por completo.
+              </p>
+              <div
+                class="bg-slate-900/90 p-3 rounded-xl border border-slate-700 text-xs font-mono text-purple-300"
+              >
+                En $\int \frac{16x^2+2}{\sqrt{4x+3}}dx$, haz $u = 4x+3 \implies
+                x = \frac{u-3}{4}$.
+              </div>
+              <div
+                class="text-[11px] text-purple-400/90 bg-purple-950/30 p-2 rounded-lg border border-purple-800/40"
+              >
+                ★ Usado en: Examen 4f (Problema de mayor puntaje).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: PRACTICE & QUIZZES -->
+      <div
+        id="view-practice"
+        class="hidden flex-1 overflow-y-auto p-6 custom-scrollbar bg-slate-900 w-full"
+      >
+        <div class="max-w-3xl mx-auto space-y-6">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="gamepad-2" class="w-7 h-7 text-emerald-400"></i>
+              Autoevaluación e Identificación de $u$
+            </h2>
+            <p class="text-slate-400 text-sm mt-1">
+              Practica el paso crítico más importante de los exámenes:
+              identificar la sustitución correcta.
+            </p>
+          </div>
+
+          <!-- Quiz Card -->
+          <div
+            class="bg-slate-800/90 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-6"
+          >
+            <div
+              class="flex items-center justify-between border-b border-slate-700/80 pb-4"
+            >
+              <span
+                class="text-xs font-bold text-indigo-400 uppercase tracking-wide"
+                >Pregunta de Examen</span
+              >
+              <span
+                id="quiz-score"
+                class="text-xs font-bold bg-slate-900 px-3 py-1 rounded-full text-emerald-400 border border-slate-700"
+                >Puntaje: 0 / 0</span
+              >
+            </div>
+
+            <div
+              class="text-center py-4 bg-slate-900/80 rounded-xl border border-slate-700/60"
+            >
+              <div class="text-xs text-slate-400 mb-2">
+                Para la siguiente integral:
+              </div>
+              <div
+                id="quiz-question-math"
+                class="text-2xl font-bold text-white tex2jax_process"
+              >
+                $\int \frac{x^2 + 2x}{(x^3 + 3x^2 + 1)^{1/4}} dx$
+              </div>
+              <div class="text-sm font-medium text-slate-300 mt-4">
+                ¿Cuál es la elección óptima para la variable de sustitución
+                <span class="u-var">$u$</span>?
+              </div>
+            </div>
+
+            <div
+              id="quiz-options-container"
+              class="grid grid-cols-1 sm:grid-cols-2 gap-3"
+            >
+              <!-- Options injected via JS -->
+            </div>
+
+            <div
+              id="quiz-feedback"
+              class="hidden p-4 rounded-xl text-xs space-y-1"
+            ></div>
+
+            <div class="flex justify-end pt-2">
+              <button
+                onclick="nextQuizQuestion()"
+                class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition flex items-center gap-2"
+              >
+                Siguiente Pregunta
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FORMULA SHEET MODAL -->
+    <div
+      id="formulas-modal"
+      class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-slate-800 border border-slate-700 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden"
+      >
+        <div
+          class="p-4 border-b border-slate-700 flex items-center justify-between bg-slate-800/90"
+        >
+          <div class="flex items-center gap-2">
+            <i data-lucide="book-open" class="w-5 h-5 text-indigo-400"></i>
+            <h3 class="text-base font-bold text-white">
+              Formulario Oficial de Integrales (30 Fórmulas)
+            </h3>
+          </div>
+          <button
+            onclick="toggleFormulasModal()"
+            class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-700"
+          >
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Formula Categories Filter -->
+        <div
+          class="p-3 border-b border-slate-700/60 bg-slate-900/50 flex flex-wrap gap-2 text-xs"
+        >
+          <button
+            onclick="filterFormulas('all')"
+            class="formula-filter-btn px-3 py-1 rounded-lg bg-indigo-600 text-white font-medium"
+          >
+            Todas
+          </button>
+          <button
+            onclick="filterFormulas('basic')"
+            class="formula-filter-btn px-3 py-1 rounded-lg bg-slate-700 text-slate-300 font-medium hover:bg-slate-600"
+          >
+            Básicas (1-11)
+          </button>
+          <button
+            onclick="filterFormulas('sub')"
+            class="formula-filter-btn px-3 py-1 rounded-lg bg-slate-700 text-slate-300 font-medium hover:bg-slate-600"
+          >
+            Sustitución (12-15)
+          </button>
+          <button
+            onclick="filterFormulas('trig')"
+            class="formula-filter-btn px-3 py-1 rounded-lg bg-slate-700 text-slate-300 font-medium hover:bg-slate-600"
+          >
+            Trigonométricas (16-25)
+          </button>
+          <button
+            onclick="filterFormulas('special')"
+            class="formula-filter-btn px-3 py-1 rounded-lg bg-slate-700 text-slate-300 font-medium hover:bg-slate-600"
+          >
+            Especiales / Racionales (26-30)
+          </button>
+        </div>
+
+        <div
+          class="p-4 overflow-y-auto custom-scrollbar flex-1 grid grid-cols-1 md:grid-cols-2 gap-3"
+          id="formulas-list-container"
+        >
+          <!-- Formulas rendered dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript Data and Logic -->
+    <script>
+      // 30 FORMULAS DATA
+      const FORMULAS = [
+        { id: 1, cat: "basic", tex: "\\int dx = \\int 1 dx = x + C" },
+        { id: 2, cat: "basic", tex: "\\int k dx = k \\int dx = kx + C" },
+        { id: 3, cat: "basic", tex: "\\int x dx = \\frac{x^2}{2} + C" },
+        {
+          id: 4,
+          cat: "basic",
+          tex: "\\int kx dx = k \\int x dx = \\frac{kx^2}{2} + C",
+        },
+        {
+          id: 5,
+          cat: "basic",
+          tex: "\\int x^n dx = \\frac{x^{n+1}}{n+1} + C; n \\neq -1",
+        },
+        {
+          id: 6,
+          cat: "basic",
+          tex: "\\int kx^n dx = k \\int x^n dx = \\frac{kx^{n+1}}{n+1} + C; n \\neq -1",
+        },
+        {
+          id: 7,
+          cat: "basic",
+          tex: "\\int x^{-1} dx = \\int \\frac{dx}{x} = \\ln|x| + C",
+        },
+        {
+          id: 8,
+          cat: "basic",
+          tex: "\\int kx^{-1} dx = k \\int \\frac{1}{x} dx = k \\ln|x| + C",
+        },
+        { id: 9, cat: "basic", tex: "\\int k f(x) dx = k \\int f(x) dx" },
+        {
+          id: 10,
+          cat: "basic",
+          tex: "\\int [f(x) + g(x)] dx = \\int f(x) dx + \\int g(x) dx",
+        },
+        {
+          id: 11,
+          cat: "basic",
+          tex: "\\int [f(x) - g(x)] dx = \\int f(x) dx - \\int g(x) dx",
+        },
+        {
+          id: 12,
+          cat: "sub",
+          tex: "\\int u^n du = \\frac{u^{n+1}}{n+1} + C; n \\neq -1",
+        },
+        {
+          id: 13,
+          cat: "sub",
+          tex: "\\int u^{-1} du = \\int \\frac{du}{u} = \\ln|u| + C",
+        },
+        { id: 14, cat: "sub", tex: "\\int e^u du = e^u + C" },
+        { id: 15, cat: "sub", tex: "\\int a^u du = \\frac{1}{\\ln a} a^u + C" },
+        {
+          id: 16,
+          cat: "trig",
+          tex: "\\int \\text{sen} u \\, du = -\\cos u + C",
+        },
+        {
+          id: 17,
+          cat: "trig",
+          tex: "\\int \\cos u \\, du = \\text{sen} u + C",
+        },
+        { id: 18, cat: "trig", tex: "\\int \\sec^2 u \\, du = \\tan u + C" },
+        { id: 19, cat: "trig", tex: "\\int \\csc^2 u \\, du = -\\cot u + C" },
+        {
+          id: 20,
+          cat: "trig",
+          tex: "\\int \\sec u \\tan u \\, du = \\sec u + C",
+        },
+        {
+          id: 21,
+          cat: "trig",
+          tex: "\\int \\csc u \\cot u \\, du = -\\csc u + C",
+        },
+        {
+          id: 22,
+          cat: "trig",
+          tex: "\\int \\tan u \\, du = \\ln|\\sec u| + C",
+        },
+        {
+          id: 23,
+          cat: "trig",
+          tex: "\\int \\cot u \\, du = \\ln|\\text{sen} u| + C",
+        },
+        {
+          id: 24,
+          cat: "trig",
+          tex: "\\int \\sec u \\, du = \\ln|\\sec u + \\tan u| + C",
+        },
+        {
+          id: 25,
+          cat: "trig",
+          tex: "\\int \\csc u \\, du = \\ln|\\csc u - \\cot u| + C",
+        },
+        {
+          id: 26,
+          cat: "special",
+          tex: "\\int \\frac{du}{\\sqrt{a^2 - u^2}} = \\text{sen}^{-1}\\left(\\frac{u}{a}\\right) + C",
+        },
+        {
+          id: 27,
+          cat: "special",
+          tex: "\\int \\frac{du}{a^2 + u^2} = \\tan^{-1}\\left(\\frac{u}{a}\\right) + C",
+        },
+        {
+          id: 28,
+          cat: "special",
+          tex: "\\int \\frac{du}{u\\sqrt{u^2 - a^2}} = \\frac{1}{a} \\sec^{-1}\\left(\\frac{u}{a}\\right) + C",
+        },
+        {
+          id: 29,
+          cat: "special",
+          tex: "\\int \\frac{du}{a^2 - u^2} = \\frac{1}{2a} \\ln\\left|\\frac{u+a}{u-a}\\right| + C",
+        },
+        {
+          id: 30,
+          cat: "special",
+          tex: "\\int \\frac{du}{u^2 - a^2} = \\frac{1}{2a} \\ln\\left|\\frac{u-a}{u+a}\\right| + C",
+        },
+      ];
+
+      // EXAMS AND INTEGRALS DATA
+      const EXAMS_DATA = [
+        {
+          id: 1,
+          title: "Examen 1",
+          prof: "Prof. Miguel Viramontes",
+          exercises: [
+            {
+              id: "1a",
+              label: "a)",
+              tex: "\\int \\frac{x^2 + 2x}{(x^3 + 3x^2 + 1)^{1/4}} dx",
+              trick: "Sustitución $u$ por Grado Mayor",
+              hint: "El denominador tiene grado 3 y el numerador grado 2. Define $u$ como el polinomio dentro de la potencia.",
+              steps: [
+                {
+                  title: "Paso 1: Elección de la variable $u$",
+                  desc: "Elegimos $u$ como la base con el exponente fraccionario en el denominador.",
+                  math: "u = x^3 + 3x^2 + 1",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 2: Diferencial $du$",
+                  desc: "Derivamos $u$ con respecto a $x$ y factorizamos la constante $3$.",
+                  math: "du = (3x^2 + 6x)dx = 3(x^2 + 2x)dx \\implies \\frac{du}{3} = (x^2 + 2x)dx",
+                  formulaRef: 9,
+                },
+                {
+                  title: "Paso 3: Sustitución en la Integral",
+                  desc: "Reemplazamos el numerador y denominador en términos de $u$. Reescribimos $u^{1/4}$ como exponente negativo $u^{-1/4}$.",
+                  math: "\\int \\frac{1}{u^{1/4}} \\cdot \\frac{du}{3} = \\frac{1}{3} \\int u^{-1/4} du",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 4: Integración y Respuesta Final",
+                  desc: "Aplicamos la regla de la potencia $\\int u^n du = \\frac{u^{n+1}}{n+1}$ y volvemos a la variable $x$.",
+                  math: "\\frac{1}{3} \\cdot \\frac{u^{3/4}}{3/4} + C = \\mathbf{\\frac{4}{9} (x^3 + 3x^2 + 1)^{3/4} + C}",
+                  formulaRef: 12,
+                },
+              ],
+            },
+            {
+              id: "1b",
+              label: "b)",
+              tex: "\\int \\frac{x^{1/5} - 3x + 1}{x^{3/2}} dx",
+              trick: "División por Monomio",
+              hint: "Separa la fracción dividiendo cada término del numerador por $x^{3/2}$. Usa $x^a / x^b = x^{a-b}$.",
+              steps: [
+                {
+                  title: "Paso 1: Separar la fracción",
+                  desc: "Dividimos cada término entre el denominador común $x^{3/2}$.",
+                  math: "\\int \\left( \\frac{x^{1/5}}{x^{3/2}} - \\frac{3x}{x^{3/2}} + \\frac{1}{x^{3/2}} \\right) dx",
+                  formulaRef: 10,
+                },
+                {
+                  title: "Paso 2: Leyes de Exponentes",
+                  desc: "Restamos los exponentes: $\\frac{1}{5} - \\frac{3}{2} = -\\frac{13}{10}$, $1 - \\frac{3}{2} = -\\frac{1}{2}$.",
+                  math: "\\int \\left( x^{-13/10} - 3x^{-1/2} + x^{-3/2} \\right) dx",
+                  formulaRef: 5,
+                },
+                {
+                  title: "Paso 3: Integrar cada término",
+                  desc: "Aplicamos $\\int x^n dx = \\frac{x^{n+1}}{n+1}$ término a término.",
+                  math: "\\frac{x^{-3/10}}{-3/10} - 3 \\frac{x^{1/2}}{1/2} + \\frac{x^{-1/2}}{-1/2} + C",
+                  formulaRef: 5,
+                },
+                {
+                  title: "Paso 4: Resultado Simplificado",
+                  desc: "Ajustamos los coeficientes fraccionarios.",
+                  math: "\\mathbf{-\\frac{10}{3} x^{-3/10} - 6 x^{1/2} - 2 x^{-1/2} + C}",
+                  formulaRef: 5,
+                },
+              ],
+            },
+            {
+              id: "1c",
+              label: "c)",
+              tex: "\\int x \\sqrt{1 - x^2} dx",
+              trick: "Sustitución en Raíz",
+              hint: "Haz $u = 1 - x^2$. Nota cómo la derivada te da el término $x\\,dx$ multiplicando por una constante.",
+              steps: [
+                {
+                  title: "Paso 1: Cambio de variable",
+                  desc: "Definimos $u$ como el radicado.",
+                  math: "u = 1 - x^2 \\implies du = -2x dx \\implies -\\frac{du}{2} = x dx",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 2: Sustituir en la integral",
+                  desc: "Reescribimos la raíz cuadrada como exponente $1/2$.",
+                  math: "\\int u^{1/2} \\left( -\\frac{du}{2} \\right) = -\\frac{1}{2} \\int u^{1/2} du",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 3: Resultado Final",
+                  desc: "Integramos y regresamos a $x$.",
+                  math: "-\\frac{1}{2} \\left( \\frac{u^{3/2}}{3/2} \\right) + C = \\mathbf{-\\frac{1}{3} (1 - x^2)^{3/2} + C}",
+                  formulaRef: 12,
+                },
+              ],
+            },
+            {
+              id: "1d",
+              label: "d)",
+              tex: "\\int \\left( \\frac{\\sqrt{x}}{x} - x^2 + \\frac{x}{5} + \\frac{1}{2} \\right) dx",
+              trick: "Simplificación Directa",
+              hint: "Simplifica $\\frac{\\sqrt{x}}{x} = x^{1/2} / x^1 = x^{-1/2}$ antes de integrar.",
+              steps: [
+                {
+                  title: "Paso 1: Reescribir términos",
+                  desc: "Expresamos las raíces y fracciones como potencias de $x$.",
+                  math: "\\int \\left( x^{-1/2} - x^2 + \\frac{1}{5}x + \\frac{1}{2} \\right) dx",
+                  formulaRef: 5,
+                },
+                {
+                  title: "Paso 2: Integración Directa",
+                  desc: "Aplicamos la regla de la potencia a cada término.",
+                  math: "\\frac{x^{1/2}}{1/2} - \\frac{x^3}{3} + \\frac{1}{5} \\frac{x^2}{2} + \\frac{1}{2}x + C",
+                  formulaRef: 5,
+                },
+                {
+                  title: "Paso 3: Resultado Final",
+                  desc: "Expresamos de forma limpia.",
+                  math: "\\mathbf{2\\sqrt{x} - \\frac{x^3}{3} + \\frac{x^2}{10} + \\frac{1}{2}x + C}",
+                  formulaRef: 5,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 2,
+          title: "Examen 2",
+          prof: "Prof. Gustavo Reyna",
+          exercises: [
+            {
+              id: "2a",
+              label: "a)",
+              tex: "\\int \\left( \\frac{x^5}{2} - \\frac{1}{x^2} + \\frac{x}{3} \\right) dx",
+              trick: "Exponentes Negativos",
+              hint: "Reescribe $\\frac{1}{x^2}$ como $x^{-2}$ antes de integrar.",
+              steps: [
+                {
+                  title: "Paso 1: Acondicionar exponentes",
+                  desc: "Escribimos todo en forma $k x^n$.",
+                  math: "\\int \\left( \\frac{1}{2}x^5 - x^{-2} + \\frac{1}{3}x \\right) dx",
+                  formulaRef: 5,
+                },
+                {
+                  title: "Paso 2: Integración término a término",
+                  desc: "Sumamos $+1$ a cada exponente.",
+                  math: "\\frac{1}{2}\\left(\\frac{x^6}{6}\\right) - \\left(\\frac{x^{-1}}{-1}\\right) + \\frac{1}{3}\\left(\\frac{x^2}{2}\\right) + C",
+                  formulaRef: 5,
+                },
+                {
+                  title: "Paso 3: Resultado Final",
+                  desc: "Simplificamos los signos y coeficientes.",
+                  math: "\\mathbf{\\frac{x^6}{12} + \\frac{1}{x} + \\frac{x^2}{6} + C}",
+                  formulaRef: 5,
+                },
+              ],
+            },
+            {
+              id: "2b",
+              label: "b)",
+              tex: "\\int \\frac{2x^3 - 3x + 1}{\\sqrt[3]{x^4 - 3x^2 + 2x}} dx",
+              trick: "Factor Constante en $du$",
+              hint: "Deriva el término dentro de la raíz cúbica: $(x^4 - 3x^2 + 2x)' = 4x^3 - 6x + 2 = 2(2x^3 - 3x + 1)$.",
+              steps: [
+                {
+                  title: "Paso 1: Cambio de variable",
+                  desc: "Definimos $u$ como el polinomio interno.",
+                  math: "u = x^4 - 3x^2 + 2x",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 2: Obtener $du$",
+                  desc: "Factorizamos un 2 para que coincida exactamente con el numerador.",
+                  math: "du = (4x^3 - 6x + 2)dx = 2(2x^3 - 3x + 1)dx \\implies \\frac{du}{2} = (2x^3 - 3x + 1)dx",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 3: Sustituir e integrar",
+                  desc: "Convertimos la raíz cúbica en potencia $u^{-1/3}$.",
+                  math: "\\int \\frac{1}{u^{1/3}} \\frac{du}{2} = \\frac{1}{2} \\int u^{-1/3} du = \\frac{1}{2} \\left( \\frac{u^{2/3}}{2/3} \\right) + C",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 4: Resultado Final",
+                  desc: "Simplificamos la fracción de fracciones $\\frac{1}{2} \\cdot \\frac{3}{2} = \\frac{3}{4}$.",
+                  math: "\\mathbf{\\frac{3}{4} (x^4 - 3x^2 + 2x)^{2/3} + C}",
+                  formulaRef: 12,
+                },
+              ],
+            },
+            {
+              id: "2c",
+              label: "c)",
+              tex: "\\int \\left( \\frac{x}{\\sqrt{x}} + \\frac{x^3}{\\sqrt{x}} \\right) dx",
+              trick: "Simplificación Radical",
+              hint: "Recuerda que $\\sqrt{x} = x^{1/2}$. Resta exponentes: $1 - 1/2 = 1/2$ y $3 - 1/2 = 5/2$.",
+              steps: [
+                {
+                  title: "Paso 1: Simplificar algebraicamente",
+                  desc: "Leyes de los exponentes.",
+                  math: "\\int \\left( x^{1 - 1/2} + x^{3 - 1/2} \\right) dx = \\int (x^{1/2} + x^{5/2}) dx",
+                  formulaRef: 5,
+                },
+                {
+                  title: "Paso 2: Aplicar Regla de Potencia",
+                  desc: "Sumamos $+1$ a los exponentes.",
+                  math: "\\frac{x^{3/2}}{3/2} + \\frac{x^{7/2}}{7/2} + C = \\mathbf{\\frac{2}{3}x^{3/2} + \\frac{2}{7}x^{7/2} + C}",
+                  formulaRef: 5,
+                },
+              ],
+            },
+            {
+              id: "2d",
+              label: "d)",
+              tex: "\\int \\frac{9x^2 dx}{(x^3 - \\sqrt{2})^4}",
+              trick: "Ajuste Numérico de $du$",
+              hint: "Si $u = x^3 - \\sqrt{2}$, entonces $du = 3x^2 dx$. Para tener $9x^2 dx$, multiplicamos por 3.",
+              steps: [
+                {
+                  title: "Paso 1: Cambio de variable",
+                  desc: "Elegimos $u$ ignorando la constante $\\sqrt{2}$ (su derivada es 0).",
+                  math: "u = x^3 - \\sqrt{2} \\implies du = 3x^2 dx \\implies 3du = 9x^2 dx",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 2: Sustitución y cálculo",
+                  desc: "Pasamos la potencia 4 arriba como $u^{-4}$.",
+                  math: "\\int \\frac{3du}{u^4} = 3 \\int u^{-4} du = 3 \\left( \\frac{u^{-3}}{-3} \\right) + C = -u^{-3} + C",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 3: Resultado Final",
+                  desc: "Escribimos con exponente positivo abajo.",
+                  math: "\\mathbf{-\\frac{1}{(x^3 - \\sqrt{2})^3} + C}",
+                  formulaRef: 12,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 3,
+          title: "Examen 3",
+          prof: "Cálculo 'A'",
+          exercises: [
+            {
+              id: "3a",
+              label: "a)",
+              tex: "\\int 16x^3 (x^4 + 4)^{2025} dx",
+              trick: "Exponentes Grandes",
+              hint: "No te asustes por el 2025. Trátalo como $u^n$ donde $n = 2025$.",
+              steps: [
+                {
+                  title: "Paso 1: Identificar $u$",
+                  desc: "Elegimos la base dentro de la potencia masiva.",
+                  math: "u = x^4 + 4 \\implies du = 4x^3 dx \\implies 4du = 16x^3 dx",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 2: Sustituir",
+                  desc: "Reemplazamos $16x^3 dx$ por $4du$.",
+                  math: "4 \\int u^{2025} du = 4 \\left( \\frac{u^{2026}}{2026} \\right) + C",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 3: Resultado Final",
+                  desc: "Simplificamos la fracción $\\frac{4}{2026} = \\frac{2}{1013}$.",
+                  math: "\\mathbf{\\frac{2}{1013} (x^4 + 4)^{2026} + C}",
+                  formulaRef: 12,
+                },
+              ],
+            },
+            {
+              id: "3b",
+              label: "b)",
+              tex: "\\int \\frac{x^2 + 1}{\\sqrt{x^3 + 3x}} dx",
+              trick: "Patrón $\\frac{du}{\\sqrt{u}}$",
+              hint: "Deriva $x^3 + 3x$ y verás que es $3(x^2 + 1)$.",
+              steps: [
+                {
+                  title: "Paso 1: Cambio de variable",
+                  desc: "Hacemos $u$ igual al polinomio bajo la raíz.",
+                  math: "u = x^3 + 3x \\implies du = (3x^2 + 3)dx = 3(x^2 + 1)dx \\implies \\frac{du}{3} = (x^2 + 1)dx",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 2: Sustitución e Integración",
+                  desc: "Integramos $u^{-1/2}$.",
+                  math: "\\frac{1}{3} \\int u^{-1/2} du = \\frac{1}{3} \\left( \\frac{u^{1/2}}{1/2} \\right) + C = \\frac{2}{3} \\sqrt{u} + C",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 3: Resultado Final",
+                  desc: "Regresamos a la variable $x$.",
+                  math: "\\mathbf{\\frac{2}{3} \\sqrt{x^3 + 3x} + C}",
+                  formulaRef: 12,
+                },
+              ],
+            },
+            {
+              id: "3c",
+              label: "c)",
+              tex: "\\int \\frac{2x^{3/5} + \\sqrt{x}}{x^{1/2}} dx",
+              trick: "Fracciones de Exponentes",
+              hint: "Recuerda que $\\sqrt{x} = x^{1/2}$. La segunda parte $\\frac{x^{1/2}}{x^{1/2}} = 1$.",
+              steps: [
+                {
+                  title: "Paso 1: Separar los dos términos",
+                  desc: "Dividimos individualmente.",
+                  math: "\\int \\left( \\frac{2x^{3/5}}{x^{1/2}} + \\frac{x^{1/2}}{x^{1/2}} \\right) dx = \\int \\left( 2x^{\\frac{3}{5} - \\frac{1}{2}} + 1 \\right) dx",
+                  formulaRef: 10,
+                },
+                {
+                  title: "Paso 2: Operar fracciones",
+                  desc: "$\\frac{3}{5} - \\frac{1}{2} = \\frac{6-5}{10} = \\frac{1}{10}$.",
+                  math: "\\int (2x^{1/10} + 1) dx",
+                  formulaRef: 5,
+                },
+                {
+                  title: "Paso 3: Resultado Final",
+                  desc: "Integramos $x^{1/10}$ y la constante 1.",
+                  math: "2 \\left( \\frac{x^{11/10}}{11/10} \\right) + x + C = \\mathbf{\\frac{20}{11} x^{11/10} + x + C}",
+                  formulaRef: 5,
+                },
+              ],
+            },
+            {
+              id: "3d",
+              label: "d)",
+              tex: "\\int \\left( x^3 + \\frac{1}{x^2} - \\frac{1}{2} \\right) dx",
+              trick: "Integración Básica Directa",
+              hint: "Sube $x^2$ al numerador como $x^{-2}$.",
+              steps: [
+                {
+                  title: "Paso 1: Reescribir",
+                  desc: "Expresamos como exponentes simples.",
+                  math: "\\int (x^3 + x^{-2} - 1/2) dx",
+                  formulaRef: 5,
+                },
+                {
+                  title: "Paso 2: Resultado Final",
+                  desc: "Aplicamos $\\int x^n dx$ directamente.",
+                  math: "\\frac{x^4}{4} + \\frac{x^{-1}}{-1} - \\frac{1}{2}x + C = \\mathbf{\\frac{x^4}{4} - \\frac{1}{x} - \\frac{x}{2} + C}",
+                  formulaRef: 5,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 4,
+          title: "Examen 4",
+          prof: "Examen Extenso (6 ejerc.)",
+          exercises: [
+            {
+              id: "4a",
+              label: "a)",
+              tex: "\\int \\frac{3\\sqrt[3]{x^2} + 2\\sqrt[3]{x}}{x} dx",
+              trick: "Leyes de Radicales",
+              hint: "Convertir a exponentes fraccionarios: $\\sqrt[3]{x^2} = x^{2/3}$ y $\\sqrt[3]{x} = x^{1/3}$.",
+              steps: [
+                {
+                  title: "Paso 1: Exponentes fraccionarios",
+                  desc: "Dividimos ambos términos entre $x^1$.",
+                  math: "\\int \\left( 3 x^{\\frac{2}{3} - 1} + 2 x^{\\frac{1}{3} - 1} \\right) dx = \\int (3 x^{-1/3} + 2 x^{-2/3}) dx",
+                  formulaRef: 5,
+                },
+                {
+                  title: "Paso 2: Aplicar la regla de potencia",
+                  desc: "$-1/3 + 1 = 2/3$ y $-2/3 + 1 = 1/3$.",
+                  math: "3 \\left( \\frac{x^{2/3}}{2/3} \\right) + 2 \\left( \\frac{x^{1/3}}{1/3} \\right) + C",
+                  formulaRef: 5,
+                },
+                {
+                  title: "Paso 3: Resultado Final",
+                  desc: "Simplificamos las fracciones de coeficientes.",
+                  math: "\\mathbf{\\frac{9}{2} x^{2/3} + 6 x^{1/3} + C}",
+                  formulaRef: 5,
+                },
+              ],
+            },
+            {
+              id: "4b",
+              label: "b)",
+              tex: "\\int \\frac{dy}{\\sqrt{y}\\sqrt{1+\\sqrt{y}}}",
+              trick: "Raíz Anidada",
+              hint: "Haz $u = 1 + \\sqrt{y}$. La derivada de $\\sqrt{y}$ es $\\frac{1}{2\\sqrt{y}}$, lo que encaja perfecto.",
+              steps: [
+                {
+                  title: "Paso 1: Cambio de variable",
+                  desc: "Elegimos la expresión interna más compleja.",
+                  math: "u = 1 + \\sqrt{y} = 1 + y^{1/2} \\implies du = \\frac{1}{2\\sqrt{y}} dy \\implies 2du = \\frac{dy}{\\sqrt{y}}",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 2: Sustitución",
+                  desc: "Queda una simple integral de $\\frac{1}{\\sqrt{u}}$.",
+                  math: "\\int \\frac{2du}{\\sqrt{u}} = 2 \\int u^{-1/2} du = 2 \\left( \\frac{u^{1/2}}{1/2} \\right) + C = 4\\sqrt{u} + C",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 3: Resultado Final",
+                  desc: "Sustituimos de nuevo $u$.",
+                  math: "\\mathbf{4 \\sqrt{1 + \\sqrt{y}} + C}",
+                  formulaRef: 12,
+                },
+              ],
+            },
+            {
+              id: "4c",
+              label: "c)",
+              tex: "\\int \\left( \\frac{2}{x^3} + \\frac{1}{x^5} - 3\\sqrt{x} \\right) dx",
+              trick: "Polinomio con Exponentes Negativos",
+              hint: "Pasa los denominadores arriba cambiando signo al exponente.",
+              steps: [
+                {
+                  title: "Paso 1: Forma Estándar",
+                  desc: "Reescribimos como potencias.",
+                  math: "\\int (2x^{-3} + x^{-5} - 3x^{1/2}) dx",
+                  formulaRef: 5,
+                },
+                {
+                  title: "Paso 2: Integración",
+                  desc: "Aplicamos $\\int x^n dx$.",
+                  math: "2\\left(\\frac{x^{-2}}{-2}\\right) + \\left(\\frac{x^{-4}}{-4}\\right) - 3\\left(\\frac{x^{3/2}}{3/2}\\right) + C",
+                  formulaRef: 5,
+                },
+                {
+                  title: "Paso 3: Resultado Final",
+                  desc: "Limpio de coeficientes.",
+                  math: "\\mathbf{-\\frac{1}{x^2} - \\frac{1}{4x^4} - 2x^{3/2} + C}",
+                  formulaRef: 5,
+                },
+              ],
+            },
+            {
+              id: "4d",
+              label: "d)",
+              tex: "\\int \\frac{6t^3 + 12}{\\sqrt[3]{t^4 + 8t + 3}} dt",
+              trick: "Factor Común en Numerador",
+              hint: "La derivada de $t^4 + 8t + 3$ es $4t^3 + 8 = 4(t^3 + 2)$. El numerador es $6(t^3 + 2)$.",
+              steps: [
+                {
+                  title: "Paso 1: Definir $u$",
+                  desc: "Tomamos el polinomio del denominador.",
+                  math: "u = t^4 + 8t + 3 \\implies du = (4t^3 + 8)dt = 4(t^3 + 2)dt",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 2: Relación del Numerador",
+                  desc: "Buscamos el factor exacto.",
+                  math: "6t^3 + 12 = 6(t^3 + 2) = \\frac{6}{4} \\cdot 4(t^3 + 2) = \\frac{3}{2} du",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 3: Integrar",
+                  desc: "Sustituimos la variable $u$.",
+                  math: "\\frac{3}{2} \\int u^{-1/3} du = \\frac{3}{2} \\left( \\frac{u^{2/3}}{2/3} \\right) + C = \\frac{9}{4} u^{2/3} + C",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 4: Resultado Final",
+                  desc: "Volvemos a la variable original $t$.",
+                  math: "\\mathbf{\\frac{9}{4} (t^4 + 8t + 3)^{2/3} + C}",
+                  formulaRef: 12,
+                },
+              ],
+            },
+            {
+              id: "4e",
+              label: "e)",
+              tex: "\\int (x + 3)(x^2 + 1)^2 dx",
+              trick: "Desarrollo Algebraico",
+              hint: "La sustitución $u = x^2+1$ no cancela el $(x+3)$. Por tanto, ¡desarrolla los binomios con álgebra primero!",
+              steps: [
+                {
+                  title: "Paso 1: Desarrollar el Binomio al Cuadrado",
+                  desc: "$(x^2 + 1)^2 = x^4 + 2x^2 + 1$.",
+                  math: "\\int (x + 3)(x^4 + 2x^2 + 1) dx",
+                  formulaRef: 10,
+                },
+                {
+                  title: "Paso 2: Multiplicación de Polinomios",
+                  desc: "Distribución completa del término $(x+3)$.",
+                  math: "\\int (x^5 + 3x^4 + 2x^3 + 6x^2 + x + 3) dx",
+                  formulaRef: 10,
+                },
+                {
+                  title: "Paso 3: Resultado Final",
+                  desc: "Integramos cada potencia en un solo paso fácil.",
+                  math: "\\mathbf{\\frac{x^6}{6} + \\frac{3x^5}{5} + \\frac{x^4}{2} + 2x^3 + \\frac{x^2}{2} + 3x + C}",
+                  formulaRef: 5,
+                },
+              ],
+            },
+            {
+              id: "4f",
+              label: "f)",
+              tex: "\\int \\frac{16x^2 + 2}{\\sqrt{4x + 3}} dx",
+              trick: "Sustitución Avanzada Despejando $x$",
+              hint: "El problema estrella del examen. Haz $u = 4x + 3$, despeja $x = \\frac{u-3}{4}$ y sustituye todo.",
+              steps: [
+                {
+                  title: "Paso 1: Cambio de variable completo",
+                  desc: "Despejamos $x$ y $dx$ en función de $u$.",
+                  math: "u = 4x + 3 \\implies x = \\frac{u - 3}{4}, \\quad dx = \\frac{du}{4}",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 2: Expresar $16x^2 + 2$ en términos de $u$",
+                  desc: "Elevamos al cuadrado $x$.",
+                  math: "x^2 = \\frac{u^2 - 6u + 9}{16} \\implies 16x^2 + 2 = (u^2 - 6u + 9) + 2 = u^2 - 6u + 11",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 3: Sustitución y Separación",
+                  desc: "Dividimos cada término entre $\\sqrt{u} = u^{1/2}$.",
+                  math: "\\frac{1}{4} \\int \\frac{u^2 - 6u + 11}{u^{1/2}} du = \\frac{1}{4} \\int \\left( u^{3/2} - 6u^{1/2} + 11u^{-1/2} \\right) du",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 4: Integrar y Simplificar",
+                  desc: "Aplicamos $\\int u^n du$ a cada término.",
+                  math: "\\frac{1}{4} \\left( \\frac{2}{5}u^{5/2} - 4u^{3/2} + 22u^{1/2} \\right) = \\frac{1}{10}u^{5/2} - u^{3/2} + \\frac{11}{2}u^{1/2} + C",
+                  formulaRef: 12,
+                },
+                {
+                  title: "Paso 5: Resultado Final",
+                  desc: "Sustituimos $u = 4x + 3$.",
+                  math: "\\mathbf{\\frac{1}{10}(4x + 3)^{5/2} - (4x + 3)^{3/2} + \\frac{11}{2}(4x + 3)^{1/2} + C}",
+                  formulaRef: 12,
+                },
+              ],
+            },
+          ],
+        },
+      ];
+
+      // QUIZ DATA
+      const QUIZ_QUESTIONS = [
+        {
+          math: "\\int \\frac{x^2 + 2x}{(x^3 + 3x^2 + 1)^{1/4}} dx",
+          options: [
+            {
+              text: "$u = x^2 + 2x$",
+              correct: false,
+              explain:
+                "Incorrecto. Su derivada es $2x+2$, lo que te dejaría con el denominador complejo sin cancelar.",
+            },
+            {
+              text: "$u = x^3 + 3x^2 + 1$",
+              correct: true,
+              explain:
+                "¡Correcto! Su derivada es $3(x^2+2x)$, que cancela el numerador perfectamente.",
+            },
+            {
+              text: "$u = x^{1/4}$",
+              correct: false,
+              explain:
+                "Incorrecto. No simplifica el polinomio del denominador.",
+            },
+            {
+              text: "$u = x^3$",
+              correct: false,
+              explain:
+                "Incorrecto. No toma en cuenta los otros términos dentro del paréntesis.",
+            },
+          ],
+        },
+        {
+          math: "\\int \\frac{9x^2}{(x^3 - \\sqrt{2})^4} dx",
+          options: [
+            {
+              text: "$u = 9x^2$",
+              correct: false,
+              explain:
+                "Incorrecto. $u$ debe ser la expresión en la potencia del denominador.",
+            },
+            {
+              text: "$u = x^3 - \\sqrt{2}$",
+              correct: true,
+              explain:
+                "¡Excelente! $du = 3x^2 dx$, por lo que $3du = 9x^2 dx$.",
+            },
+            {
+              text: "$u = (x^3 - \\sqrt{2})^4$",
+              correct: false,
+              explain:
+                "Incorrecto. Tomar la potencia completa 4 complica el diferencial.",
+            },
+            {
+              text: "$u = \\sqrt{2}$",
+              correct: false,
+              explain: "Incorrecto. Es una constante simple.",
+            },
+          ],
+        },
+        {
+          math: "\\int \\frac{dy}{\\sqrt{y}\\sqrt{1+\\sqrt{y}}}",
+          options: [
+            {
+              text: "$u = \\sqrt{y}$",
+              correct: false,
+              explain:
+                "Cerca, pero dejarías el $1+$ sin simplificar dentro de la otra raíz.",
+            },
+            {
+              text: "$u = 1 + \\sqrt{y}$",
+              correct: true,
+              explain:
+                "¡Excelente! $du = \\frac{1}{2\\sqrt{y}} dy$, cancelando el $\\sqrt{y}$ del denominador.",
+            },
+            {
+              text: "$u = y$",
+              correct: false,
+              explain:
+                "Incorrecto. Es un cambio trivial de nombre de variable.",
+            },
+            {
+              text: "$u = \\frac{1}{\\sqrt{y}}$",
+              correct: false,
+              explain: "Incorrecto. Complicaría la integral.",
+            },
+          ],
+        },
+      ];
+
+      // STATE VARIABLES
+      let currentExamIndex = 0;
+      let currentExerciseIndex = 0;
+      let currentStepIndex = 0;
+      let quizIndex = 0;
+      let quizScore = 0;
+      let quizTotal = 0;
+      let showAllSteps = false;
+
+      // ON LOAD INITIALIZATION
+      window.addEventListener("DOMContentLoaded", () => {
+        renderExamTabs();
+        renderFormulasList(FORMULAS);
+        loadExercise(0, 0);
+        loadQuizQuestion(0);
+        lucide.createIcons();
+      });
+
+      window.onMathJaxLoaded = () => {
+        triggerMathJax();
+      };
+
+      // RE-RENDER MATHJAX safely
+      function triggerMathJax() {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          // Clear typesetting and render again cleanly
+          window.MathJax.typesetClear && window.MathJax.typesetClear();
+          window.MathJax.typesetPromise().catch((err) =>
+            console.log("MathJax error:", err),
+          );
+        }
+      }
+
+      // NAVIGATION TABS SWITCHING
+      function switchMainTab(tab) {
+        document.getElementById("view-exams").classList.add("hidden");
+        document.getElementById("view-tips").classList.add("hidden");
+        document.getElementById("view-practice").classList.add("hidden");
+
+        // Reset buttons
+        ["exams", "tips", "practice"].forEach((t) => {
+          const btn = document.getElementById(`tab-btn-${t}`);
+          const mBtn = document.getElementById(`mobile-tab-btn-${t}`);
+          if (btn) {
+            btn.className =
+              "px-4 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800";
+          }
+          if (mBtn) {
+            mBtn.className =
+              "px-3 py-1 rounded-md text-slate-400 font-medium flex items-center gap-1";
+          }
+        });
+
+        // Active button
+        document.getElementById(`view-${tab}`).classList.remove("hidden");
+        const activeBtn = document.getElementById(`tab-btn-${tab}`);
+        const activeMBtn = document.getElementById(`mobile-tab-btn-${tab}`);
+        if (activeBtn) {
+          activeBtn.className =
+            "px-4 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-2 bg-blue-600 text-white shadow-sm";
+        }
+        if (activeMBtn) {
+          activeMBtn.className =
+            "px-3 py-1 rounded-md bg-blue-600 text-white font-medium flex items-center gap-1";
+        }
+
+        triggerMathJax();
+      }
+
+      // RENDER EXAM SELECTOR BUTTONS
+      function renderExamTabs() {
+        const container = document.getElementById("exam-buttons-container");
+        container.innerHTML = EXAMS_DATA.map(
+          (exam, idx) => `
+                <button onclick="selectExam(${idx})" id="exam-tab-${idx}" class="py-1.5 px-2 rounded-md text-xs font-bold transition text-center ${idx === 0 ? "bg-blue-600 text-white shadow" : "text-slate-400 hover:text-white hover:bg-slate-800"}">
+                    Examen ${exam.id}
+                </button>
+            `,
+        ).join("");
+      }
+
+      function selectExam(idx) {
+        currentExamIndex = idx;
+        EXAMS_DATA.forEach((_, i) => {
+          const btn = document.getElementById(`exam-tab-${i}`);
+          if (i === idx) {
+            btn.className =
+              "py-1.5 px-2 rounded-md text-xs font-bold transition text-center bg-blue-600 text-white shadow";
+          } else {
+            btn.className =
+              "py-1.5 px-2 rounded-md text-xs font-bold transition text-center text-slate-400 hover:text-white hover:bg-slate-800";
+          }
+        });
+        renderExerciseList();
+        loadExercise(idx, 0);
+      }
+
+      // RENDER EXERCISES LIST FOR CURRENT EXAM
+      function renderExerciseList() {
+        const container = document.getElementById("exercise-list");
+        const exam = EXAMS_DATA[currentExamIndex];
+        document.getElementById("exam-prof-badge").textContent = exam.prof;
+
+        container.innerHTML = exam.exercises
+          .map(
+            (ex, idx) => `
+                <button onclick="loadExercise(${currentExamIndex}, ${idx})" id="ex-card-${idx}" class="w-full text-left p-2.5 rounded-xl border transition flex items-center justify-between gap-2 ${idx === currentExerciseIndex ? "bg-indigo-950/40 border-indigo-500/60 text-white" : "bg-slate-900/50 border-slate-700/50 text-slate-300 hover:bg-slate-800/80"}">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <span class="font-bold text-xs bg-slate-800 px-2 py-1 rounded text-indigo-300 border border-slate-700">${ex.label}</span>
+                        <span class="text-xs truncate tex2jax_process">$${ex.tex}$</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500 shrink-0"></i>
+                </button>
+            `,
+          )
+          .join("");
+
+        lucide.createIcons();
+        triggerMathJax();
+      }
+
+      // LOAD SPECIFIC EXERCISE
+      function loadExercise(examIdx, exIdx) {
+        currentExamIndex = examIdx;
+        currentExerciseIndex = exIdx;
+        currentStepIndex = 0;
+        showAllSteps = false;
+
+        const exam = EXAMS_DATA[examIdx];
+        const ex = exam.exercises[exIdx];
+
+        // Highlight active exercise card
+        exam.exercises.forEach((_, i) => {
+          const card = document.getElementById(`ex-card-${i}`);
+          if (card) {
+            if (i === exIdx) {
+              card.className =
+                "w-full text-left p-2.5 rounded-xl border transition flex items-center justify-between gap-2 bg-indigo-950/50 border-indigo-500/60 text-white shadow-md shadow-indigo-500/5";
+            } else {
+              card.className =
+                "w-full text-left p-2.5 rounded-xl border transition flex items-center justify-between gap-2 bg-slate-900/50 border-slate-700/50 text-slate-300 hover:bg-slate-800/80";
+            }
+          }
+        });
+
+        // Update Header Info
+        document.getElementById("current-ex-badge").textContent =
+          `${exam.title} - Ejercicio ${ex.label}`;
+        document.getElementById("trick-text").textContent = ex.trick;
+        document.getElementById("math-problem-display").textContent =
+          `$${ex.tex}$`;
+        document.getElementById("current-hint-text").textContent = ex.hint;
+
+        // Render Steps
+        renderSteps();
+        updateStepControls();
+        triggerMathJax();
+      }
+
+      // RENDER STEPS CARDS
+      function renderSteps() {
+        const container = document.getElementById("steps-container");
+        const ex = EXAMS_DATA[currentExamIndex].exercises[currentExerciseIndex];
+
+        container.innerHTML = ex.steps
+          .map((step, idx) => {
+            const isVisible = showAllSteps || idx <= currentStepIndex;
+            const isCurrent = idx === currentStepIndex && !showAllSteps;
+
+            return `
+                    <div class="transition-all duration-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-20 blur-xs pointer-events-none hidden"}">
+                        <div class="bg-slate-800/80 rounded-2xl p-5 border ${isCurrent ? "border-blue-500/80 shadow-lg shadow-blue-500/10 bg-slate-800" : "border-slate-700/60"} space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-full ${isCurrent ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-300"} flex items-center justify-center text-xs font-bold">
+                                        ${idx + 1}
+                                    </span>
+                                    <h4 class="font-bold text-sm text-slate-100 tex2jax_process">${step.title}</h4>
+                                </div>
+                                <button onclick="openFormulaModal(${step.formulaRef})" class="text-[11px] bg-slate-900 text-indigo-300 border border-slate-700 hover:border-indigo-500/50 px-2.5 py-1 rounded-lg font-mono flex items-center gap-1 transition">
+                                    <i data-lucide="book-open" class="w-3 h-3"></i> Fórmula ${step.formulaRef}
+                                </button>
+                            </div>
+
+                            <p class="text-xs text-slate-300 leading-relaxed tex2jax_process">${step.desc}</p>
+
+                            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700/80 text-center overflow-x-auto custom-scrollbar">
+                                <div class="text-base font-semibold text-white tex2jax_process">$${step.math}$</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+          })
+          .join("");
+
+        lucide.createIcons();
+        triggerMathJax();
+      }
+
+      // STEP CONTROLS (PREV/NEXT)
+      function nextStep() {
+        const ex = EXAMS_DATA[currentExamIndex].exercises[currentExerciseIndex];
+        if (currentStepIndex < ex.steps.length - 1) {
+          currentStepIndex++;
+          renderSteps();
+          updateStepControls();
+        }
+      }
+
+      function prevStep() {
+        if (currentStepIndex > 0) {
+          currentStepIndex--;
+          renderSteps();
+          updateStepControls();
+        }
+      }
+
+      function toggleShowAllSteps() {
+        showAllSteps = !showAllSteps;
+        const btn = document.getElementById("btn-toggle-all");
+        if (showAllSteps) {
+          btn.className =
+            "px-2.5 py-1.5 rounded-lg text-xs font-medium bg-blue-600 text-white border border-blue-500 transition";
+        } else {
+          btn.className =
+            "px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-700/60 text-slate-300 hover:bg-slate-700 border border-slate-600/50 transition";
+        }
+        renderSteps();
+        updateStepControls();
+      }
+
+      function updateStepControls() {
+        const ex = EXAMS_DATA[currentExamIndex].exercises[currentExerciseIndex];
+        document.getElementById("step-current-num").textContent =
+          currentStepIndex + 1;
+        document.getElementById("step-total-num").textContent = ex.steps.length;
+
+        document.getElementById("btn-prev-step").disabled =
+          currentStepIndex === 0 || showAllSteps;
+        document.getElementById("btn-next-step").disabled =
+          currentStepIndex === ex.steps.length - 1 || showAllSteps;
+      }
+
+      // FORMULA MODAL LOGIC
+      function toggleFormulasModal() {
+        const modal = document.getElementById("formulas-modal");
+        modal.classList.toggle("hidden");
+        if (!modal.classList.contains("hidden")) {
+          triggerMathJax();
+        }
+      }
+
+      function renderFormulasList(list) {
+        const container = document.getElementById("formulas-list-container");
+        container.innerHTML = list
+          .map(
+            (f) => `
+                <div id="formula-card-${f.id}" class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-700/80 flex items-center justify-between gap-3 transition hover:border-indigo-500/50">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-indigo-400 bg-indigo-950/60 border border-indigo-800/50 px-2 py-0.5 rounded font-mono">#${f.id}</span>
+                        <div class="text-sm text-slate-100 tex2jax_process">$${f.tex}$</div>
+                    </div>
+                </div>
+            `,
+          )
+          .join("");
+        triggerMathJax();
+      }
+
+      function filterFormulas(cat) {
+        // Highlight active filter button
+        document.querySelectorAll(".formula-filter-btn").forEach((btn) => {
+          btn.className =
+            "formula-filter-btn px-3 py-1 rounded-lg bg-slate-700 text-slate-300 font-medium hover:bg-slate-600";
+        });
+        event.target.className =
+          "formula-filter-btn px-3 py-1 rounded-lg bg-indigo-600 text-white font-medium";
+
+        if (cat === "all") {
+          renderFormulasList(FORMULAS);
+        } else {
+          renderFormulasList(FORMULAS.filter((f) => f.cat === cat));
+        }
+      }
+
+      function openFormulaModal(formulaId) {
+        toggleFormulasModal();
+        setTimeout(() => {
+          const el = document.getElementById(`formula-card-${formulaId}`);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            el.classList.add("border-amber-400", "bg-slate-800");
+            setTimeout(() => {
+              el.classList.remove("border-amber-400", "bg-slate-800");
+            }, 2000);
+          }
+        }, 100);
+      }
+
+      function openFormulaForCurrentStep() {
+        const ex = EXAMS_DATA[currentExamIndex].exercises[currentExerciseIndex];
+        const currentStep = ex.steps[currentStepIndex];
+        openFormulaModal(currentStep.formulaRef);
+      }
+
+      // QUIZ LOGIC
+      function loadQuizQuestion(idx) {
+        quizIndex = idx % QUIZ_QUESTIONS.length;
+        const q = QUIZ_QUESTIONS[quizIndex];
+
+        document.getElementById("quiz-question-math").textContent =
+          `$${q.math}$`;
+        document.getElementById("quiz-feedback").className =
+          "hidden p-4 rounded-xl text-xs space-y-1";
+
+        const optionsContainer = document.getElementById(
+          "quiz-options-container",
+        );
+        optionsContainer.innerHTML = q.options
+          .map(
+            (opt, i) => `
+                <button onclick="checkQuizAnswer(${i})" class="quiz-opt-btn w-full text-left p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-indigo-500/60 hover:bg-slate-800 text-slate-200 text-xs font-medium transition flex items-center justify-between">
+                    <span class="tex2jax_process">${opt.text}</span>
+                    <i data-lucide="circle" class="w-4 h-4 text-slate-600 shrink-0"></i>
+                </button>
+            `,
+          )
+          .join("");
+
+        lucide.createIcons();
+        triggerMathJax();
+      }
+
+      function checkQuizAnswer(optionIdx) {
+        const q = QUIZ_QUESTIONS[quizIndex];
+        const opt = q.options[optionIdx];
+        const feedback = document.getElementById("quiz-feedback");
+
+        quizTotal++;
+        if (opt.correct) quizScore++;
+
+        document.getElementById("quiz-score").textContent =
+          `Puntaje: ${quizScore} / ${quizTotal}`;
+
+        feedback.classList.remove("hidden");
+        if (opt.correct) {
+          feedback.className =
+            "p-4 rounded-xl text-xs bg-emerald-950/60 border border-emerald-600/60 text-emerald-300 block";
+          feedback.innerHTML = `<div class="font-bold flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> ¡Respuesta Correcta!</div><div>${opt.explain}</div>`;
+        } else {
+          feedback.className =
+            "p-4 rounded-xl text-xs bg-rose-950/60 border border-rose-600/60 text-rose-300 block";
+          feedback.innerHTML = `<div class="font-bold flex items-center gap-1.5"><i data-lucide="x-circle" class="w-4 h-4 text-rose-400"></i> No es la mejor opción</div><div>${opt.explain}</div>`;
+        }
+
+        // Disable buttons after answer
+        document.querySelectorAll(".quiz-opt-btn").forEach((btn, i) => {
+          btn.disabled = true;
+          if (i === optionIdx) {
+            btn.classList.add(
+              opt.correct ? "border-emerald-500" : "border-rose-500",
+            );
+          }
+        });
+
+        lucide.createIcons();
+        triggerMathJax();
+      }
+
+      function nextQuizQuestion() {
+        loadQuizQuestion(quizIndex + 1);
+      }
+    </script>
+  </body>
+</html>
